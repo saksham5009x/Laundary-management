@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unique Bag ID</title>
+</head>
+<body>
+
+<h2>Generate Laundry Bag ID</h2>
+
+<button onclick="generateBagID()">Generate ID</button>
+
+<h2 id="result"></h2>
+
+<script>
+function generateBagID() {
+
+    let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+
+    let bagId;
+
+    do {
+        bagId = "WW" + Date.now() + Math.floor(Math.random() * 100);
+    } while(bookings.some(b => b.bagId === bagId));
+
+    document.getElementById("result").innerHTML =
+        "Your Bag ID: " + bagId;
+}
+</script>
+
+</body>
+</html>

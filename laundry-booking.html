@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laundry Booking</title>
+</head>
+<body>
+
+<h2>Laundry Booking</h2>
+
+<form id="bookingForm">
+
+    <input id="roll" placeholder="Student ID" required>
+
+    <select id="type" required>
+        <option value="">Select Laundry Type</option>
+        <option>Regular Clothes</option>
+        <option>Heavy Clothes</option>
+        <option>Bedsheets</option>
+    </select>
+
+    <input id="quantity" type="number" min="1"
+           placeholder="Number of Clothes" required>
+
+    <input id="date" type="date" required>
+
+    <button type="submit">Book Laundry</button>
+
+</form>
+
+<h3 id="result"></h3>
+
+<script>
+document.getElementById("bookingForm").onsubmit = function(e) {
+
+    e.preventDefault();
+
+    let students = JSON.parse(localStorage.getItem("students") || "[]");
+
+    let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+
+    let roll = document.getElementById("roll").value.trim();
+
+    let student = students.find(s =>
+        s.roll.toLowerCase() === roll.toLowerCase()
+    );
+
+    if(!student) {
+        alert("Please register first!");
+        return;
+    }
+
+    let bagId;
+
+    do {
+        bagId = "WW" + Date.now() + Math.floor(Math.random() * 100);
+    } while(bookings.some(b => b.bagId === bagId));
+
+    let booking = {
+        bagId: bagId,
+        roll: roll,
+        name: student.name,
+        type: document.getElementById("type").value,
+        quantity: document.getElementById("quantity").value,
+        date: document.getElementById("date").value,
+        status: "Pending"
+    };
+
+    bookings.push(booking);
+
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+
+    document.getElementById("result").innerHTML =
+        "Booking Successful!<br>Bag ID: " + bagId;
+
+    this.reset();
+};
+</script>
+
+</body>
+</html>

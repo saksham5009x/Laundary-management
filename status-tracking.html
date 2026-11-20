@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Laundry Status Tracking</title>
+</head>
+
+<body>
+
+<h2>Track Your Laundry</h2>
+
+<input id="bagId" placeholder="Enter Laundry Bag ID">
+
+<button onclick="trackLaundry()">Track Status</button>
+
+<div id="result"></div>
+
+<script>
+function trackLaundry() {
+
+    let bagId = document.getElementById("bagId").value.trim();
+
+    let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+
+    let booking = bookings.find(b => b.bagId === bagId);
+
+    let result = document.getElementById("result");
+
+    if(!booking) {
+        result.innerHTML = "Booking Not Found!";
+        return;
+    }
+
+    let stages = [
+        "Pending",
+        "Received",
+        "Washing",
+        "Drying",
+        "Ready",
+        "Delivered"
+    ];
+
+    let current = stages.indexOf(booking.status);
+
+    result.innerHTML =
+        "<h3>Bag ID: " + booking.bagId + "</h3>" +
+        "<h3>Student: " + booking.name + "</h3>" +
+        "<h3>Current Status: " + booking.status + "</h3>";
+
+    stages.forEach((stage, index) => {
+
+        result.innerHTML +=
+            "<p>" +
+            (index <= current ? "✅ " : "○ ") +
+            stage +
+            "</p>";
+    });
+}
+</script>
+
+</body>
+</html>

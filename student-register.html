@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #fff0f6;
+            padding: 30px;
+        }
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        input {
+            width: 95%;
+            padding: 12px;
+            margin: 8px 0;
+        }
+        button {
+            background: #d63384;
+            color: white;
+            padding: 12px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Student Registration</h2>
+
+    <form id="registerForm">
+        <input id="name" placeholder="Student Name" required>
+        <input id="roll" placeholder="Student ID" required>
+        <input id="email" type="email" placeholder="Email" required>
+        <input id="phone" type="tel" placeholder="Phone" required>
+        <input id="room" placeholder="Hostel Room" required>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p id="result"></p>
+</div>
+
+<script>
+document.getElementById("registerForm").onsubmit = function(e) {
+    e.preventDefault();
+
+    let students = JSON.parse(localStorage.getItem("students") || "[]");
+
+    let roll = document.getElementById("roll").value.trim();
+
+    if(students.some(s => s.roll.toLowerCase() === roll.toLowerCase())) {
+        alert("Student already registered!");
+        return;
+    }
+
+    let student = {
+        name: document.getElementById("name").value,
+        roll: roll,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        room: document.getElementById("room").value
+    };
+
+    students.push(student);
+
+    localStorage.setItem("students", JSON.stringify(students));
+
+    document.getElementById("result").innerHTML =
+        "Registration Successful! Welcome " + student.name;
+
+    this.reset();
+};
+</script>
+
+</body>
+</html>

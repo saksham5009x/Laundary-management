@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+
+<body>
+
+<h1>WashWise Admin Dashboard</h1>
+
+<h3>Total Students: <span id="students">0</span></h3>
+<h3>Total Bookings: <span id="total">0</span></h3>
+<h3>Pending: <span id="pending">0</span></h3>
+<h3>Delivered: <span id="delivered">0</span></h3>
+
+<hr>
+
+<h2>Search Booking</h2>
+
+<input id="search" placeholder="Search Bag ID or Student ID"
+       oninput="displayBookings()">
+
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>Bag ID</th>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Update Status</th>
+        </tr>
+    </thead>
+
+    <tbody id="table"></tbody>
+</table>
+
+<script>
+
+function getData(key) {
+    return JSON.parse(localStorage.getItem(key) || "[]");
+}
+
+function updateDashboard() {
+
+    let students = getData("students");
+    let bookings = getData("bookings");
+
+    document.getElementById("students").innerText = students.length;
+
+    document.getElementById("total").innerText = bookings.length;
+
+    document.getElementById("pending").innerText =
+        bookings.filter(b => b.status === "Pending").length;
+
+    document.getElementById("delivered").innerText =
+        bookings.filter(b => b.status === "Delivered").length;
+}
+
+function displayBookings() {
+
+    let bookings = getData("bookings");
+
+    let search = document.getElementById("search")
+        .value.toLowerCase();
+
+    let table = document.getElementById("table");
+
+    table.innerHTML = "";
+
+    bookings.filter(b =>
+        b.bagId.toLowerCase().includes(search) ||
+        b.roll.toLowerCase().includes(search)
+    ).forEach(b => {
+
+        let row = document.createElement("tr");
+
+        let values = [b.bagId, b.roll, b.name, b.type, b.status];
+
+        values.forEach(value => {
+            let cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+
+        let cell = document.createElement("td");
+
+        let select = document.createElement("select");
+
+        ["Pending", "Received", "Washing",
+         "Drying", "Ready", "Delivered"].forEach(status => {
+
+            let option = document.createElement("option");
+
+            option.value = status;
+            option.textContent = status;
+
+            if(b.status === status) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
+        });
+
+        select.onchange = function() {
+            updateStatus(b.bagId, this.value);
+        };
+
+        cell.appendChild(select);
+        row.appendChild(cell);
+
+        table.appendChild(row);
+    });
+}
+
+function updateStatus(bagId, status) {
+
+    let bookings = getData("bookings");
+
+    let booking = bookings.find(b => b.bagId === bagId);
+
+    if(booking) {
+        booking.status = status;
+
+        localStorage.setItem("bookings", JSON.stringify(bookings));
+
+        updateDashboard();
+        displayBookings();
+
+        alert("Status Updated Successfully!");
+    }
+}
+
+updateDashboard();
+displayBookings();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Collect Laundry | WashWise</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<section class="section">
+
+<h1>Collect Your Laundry 🎉</h1>
+
+<p>Enter your Bag ID to check collection availability.</p>
+
+<input id="bagId" placeholder="Enter Bag ID">
+
+<button onclick="checkCollection()">Check Status</button>
+
+<div id="result"></div>
+
+</section>
+
+<script>
+function checkCollection() {
+
+    let bagId = document.getElementById("bagId").value.trim();
+
+    let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+
+    let booking = bookings.find(b => b.bagId === bagId);
+
+    let result = document.getElementById("result");
+
+    if(!booking) {
+        result.innerHTML = "Invalid Bag ID!";
+        return;
+    }
+
+    if(booking.status === "Ready") {
+
+        result.innerHTML =
+            "<h2>🎉 Your Laundry Is Ready!</h2>" +
+            "<p>Student: " + booking.name + "</p>" +
+            "<p>Bag ID: " + booking.bagId + "</p>" +
+            "<p>Please visit the laundry counter to collect it.</p>";
+
+    } else if(booking.status === "Delivered") {
+
+        result.innerHTML = "<h2>Already Collected!</h2>";
+
+    } else {
+
+        result.innerHTML =
+            "<h2>Laundry Is Not Ready Yet</h2>" +
+            "<p>Current Status: " + booking.status + "</p>" +
+            "<p>Please check again later.</p>";
+    }
+}
+</script>
+
+</body>
+</html>

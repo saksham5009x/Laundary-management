@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code Generation</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+
+<h2>Generate Laundry QR Code</h2>
+
+<input type="text" id="bagId" placeholder="Enter Bag ID">
+
+<button onclick="generateQR()">Generate QR</button>
+
+<div id="qrcode"></div>
+
+<button onclick="downloadQR()">Download QR</button>
+
+<script>
+function generateQR() {
+
+    let bagId = document.getElementById("bagId").value.trim();
+
+    if(bagId === "") {
+        alert("Enter Bag ID!");
+        return;
+    }
+
+    let bookings = JSON.parse(localStorage.getItem("bookings") || "[]");
+
+    let booking = bookings.find(b => b.bagId === bagId);
+
+    if(!booking) {
+        alert("Bag ID not found!");
+        return;
+    }
+
+    document.getElementById("qrcode").innerHTML = "";
+
+    new QRCode(document.getElementById("qrcode"), {
+        text: bagId,
+        width: 180,
+        height: 180
+    });
+}
+
+function downloadQR() {
+
+    let canvas = document.querySelector("#qrcode canvas");
+
+    if(!canvas) {
+        alert("Generate QR first!");
+        return;
+    }
+
+    let link = document.createElement("a");
+
+    link.download = "Laundry-QR.png";
+    link.href = canvas.toDataURL();
+
+    link.click();
+}
+</script>
+
+</body>
+</html>
